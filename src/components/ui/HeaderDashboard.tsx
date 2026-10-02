@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { FaAlignJustify, FaBookmark, FaX } from 'react-icons/fa6'
+import { useAuthStore } from '../../store/auth.store'
+import { useNavigate } from 'react-router-dom'
 
 interface HeaderDashboardProps {
   isSidebarOpen?: boolean
@@ -12,6 +14,12 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
 }) => {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isModalExit, setIsModalExit] = useState(false);
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
 
   return (
     <header className="bg-white border-b-4 border-black px-4 sm:px-6 h-16 flex items-center justify-between z-50 shrink-0 relative">
@@ -49,7 +57,7 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
           onClick={() => setIsOpenProfile(!isOpenProfile)}
           className="flex items-center bg-purple-300 text-black font-black text-sm uppercase border-3 border-black px-6 py-3 shadow-[4px_4px_0px_0px_#000] hover:bg-purple-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer shrink-0"
         >
-          <span>User001</span>
+          <span>{user.username}</span>
         </div>
         {
           isOpenProfile && (
@@ -102,8 +110,8 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      alert('Tindakan Berhasil!')
                       setIsModalExit(false)
+                      handleLogout();
                     }}
                     className="bg-lime-300 text-black font-black text-xs uppercase border-2 border-black px-4 py-2 shadow-[2px_2px_0px_0px_#000] hover:bg-lime-400 transition-all cursor-pointer"
                   >
