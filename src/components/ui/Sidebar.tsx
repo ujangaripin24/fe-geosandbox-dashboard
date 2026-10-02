@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
         <button
           type="button"
           onClick={onClose}
-          className="md:hiddenbg-pink-300 border-2 border-black p-1 text-black font-black hover:bg-pink-400 cursor-pointer"
+          className="md:hidden bg-pink-300 border-2 border-black p-1 text-black font-black hover:bg-pink-400 cursor-pointer"
         >
           <FaCircleArrowLeft />
         </button>

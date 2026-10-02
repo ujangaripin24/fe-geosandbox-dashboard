@@ -11,7 +11,7 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
   onToggleSidebar
 }) => {
   return (
-    <header className="bg-white border-b-4 border-black px-4 sm:px-6 h-16 flex items-center justify-between z-20 shrink-0 shadow-[0px_4px_0px_0px_#000] relative">
+    <header className="bg-white border-b-4 border-black px-4 sm:px-6 h-16 flex items-center justify-between z-20 shrink-0 relative">
       <div className="flex items-center gap-3">
         <button
           type="button"
