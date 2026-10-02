@@ -4,6 +4,8 @@ import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import React from "react";
 import ComponentUIPage from "../pages/ComponentUIPage/ComponentUIPage";
+import Layout from "../components/ui/Layout";
+import DashboardPage from "../pages/DashboardPage/DashboardPage";
 
 export const router = createBrowserRouter([
     {
@@ -21,5 +23,15 @@ export const router = createBrowserRouter([
     {
         path: '/template-ui',
         element: React.createElement(ComponentUIPage)
+    },
+    {
+        path: '/dashboard',
+        element: React.createElement(Layout),
+        children: [
+            {
+                index: true,
+                element: React.createElement(DashboardPage)
+            }
+        ]
     }
 ])
