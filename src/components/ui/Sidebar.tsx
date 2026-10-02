@@ -1,6 +1,7 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { FaCircleArrowLeft } from 'react-icons/fa6'
+import { useAuthStore } from '../../store/auth.store'
 
 interface SidebarProps {
   isOpen?: boolean
@@ -9,6 +10,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, logout } = useAuthStore()
 
   const navItems = [
     {
@@ -77,6 +80,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
     }
   ]
 
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
+
   return (
     <aside
       className={`
@@ -85,8 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}
     >
-      <div className="p-4 border-b-4 lg:hidden xl:hidden  border-black flex items-center justify-between bg-white shrink-0">
-
+      <div className="p-4 border-b-4 lg:hidden xl:hidden border-black flex items-center justify-between bg-white shrink-0">
         <button
           type="button"
           onClick={onClose}
@@ -97,6 +104,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
       </div>
 
       <nav className="flex-1 overflow-y-auto p-4 space-y-6">
+        {user && (
+          <div className="bg-yellow-100 border-2 border-black p-3 shadow-[2px_2px_0px_0px_#000]">
+            <p className="text-[10px] font-black uppercase text-zinc-500">User Login:</p>
+            <p className="text-xs font-black uppercase text-black truncate">{user.username}</p>
+            <p className="text-[10px] font-extrabold text-zinc-600 truncate">{user.email}</p>
+          </div>
+        )}
+
         {navItems.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-1">
             <p className="text-[11px] font-black uppercase text-zinc-500 tracking-wider px-3 mb-2">
@@ -127,15 +142,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
       </nav>
 
       <div className="p-4 border-t-4 border-black bg-lime-300 shrink-0">
-        <a
-          href="/login"
-          className="w-full flex items-center justify-center gap-3 p-3 bg-white border-3 border-black font-black uppercase text-xs text-black shadow-[3px_3px_0px_0px_#000] hover:bg-black hover:text-white hover:shadow-[4px_4px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all group"
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-3 p-3 bg-white border-3 border-black font-black uppercase text-xs text-black shadow-[3px_3px_0px_0px_#000] hover:bg-black hover:text-white hover:shadow-[4px_4px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all group cursor-pointer"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
           <span>Keluar Akun</span>
-        </a>
+        </button>
       </div>
     </aside>
   )

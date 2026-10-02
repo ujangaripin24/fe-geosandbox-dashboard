@@ -6,6 +6,7 @@ import React from "react";
 import ComponentUIPage from "../pages/ComponentUIPage/ComponentUIPage";
 import Layout from "../components/ui/Layout";
 import DashboardPage from "../pages/DashboardPage/DashboardPage";
+import { ProtectedRoute } from "../components/ui/AuthGuards";
 
 export const router = createBrowserRouter([
     {
@@ -25,12 +26,17 @@ export const router = createBrowserRouter([
         element: React.createElement(ComponentUIPage)
     },
     {
-        path: '/dashboard',
-        element: React.createElement(Layout),
+        element: React.createElement(ProtectedRoute),
         children: [
             {
-                index: true,
-                element: React.createElement(DashboardPage)
+                path: '/dashboard',
+                element: React.createElement(Layout),
+                children: [
+                    {
+                        index: true,
+                        element: React.createElement(DashboardPage)
+                    }
+                ]
             }
         ]
     }

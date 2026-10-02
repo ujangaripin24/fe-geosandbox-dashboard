@@ -1,8 +1,11 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import axios from 'axios'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './routes/index.ts'
+
+axios.defaults.withCredentials = true;
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

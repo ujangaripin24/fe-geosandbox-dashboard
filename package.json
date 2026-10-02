@@ -12,6 +12,7 @@
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.5.2",
     "@tailwindcss/vite": "^4.3.3",
+    "axios": "^1.20.0",
     "flowbite": "^4.0.2",
     "flowbite-react": "^0.12.17",
     "mapbox-gl": "^3.32.0",
