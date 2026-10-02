@@ -28,8 +28,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+    const requestUrl = originalRequest?.url || ''
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isAuthEndpoint =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/refresh-token') ||
+      requestUrl.includes('/auth/logout')
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true
       try {
         const refreshRes = await axios.post(
@@ -55,15 +61,19 @@ apiClient.interceptors.response.use(
 )
 
 export const extractErrorMessage = (error: any): string => {
-  if (
-    error?.response?.data?.errors &&
-    Array.isArray(error.response.data.errors) &&
-    error.response.data.errors.length > 0
-  ) {
-    return error.response.data.errors[0].msg || 'Terjadi kesalahan pada server'
+  const data = error?.response?.data
+  if (Array.isArray(data) && data.length > 0 && data[0]?.msg) {
+    return data[0].msg
   }
-  if (error?.response?.data?.message) {
-    return error.response.data.message
+  if (
+    data?.errors &&
+    Array.isArray(data.errors) &&
+    data.errors.length > 0
+  ) {
+    return data.errors[0].msg || 'Terjadi kesalahan pada server'
+  }
+  if (data?.message) {
+    return data.message
   }
   if (error?.message) {
     return error.message
