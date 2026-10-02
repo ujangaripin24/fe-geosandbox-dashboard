@@ -2,38 +2,108 @@ import React from 'react'
 
 const MainHeader: React.FC = () => {
   return (
-    <nav className="bg-neutral-primary fixed w-full z-20 top-0 inset-s-0 border-b border-default">
-      <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="https://flowbite.com/docs/images/logo.svg" className="h-7" alt="Flowbite Logo" />
-          <span className="self-center text-xl text-heading font-semibold whitespace-nowrap">Flowbite</span>
+    <header className="bg-white border-b-4 border-black sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <a href="#" className="flex items-center gap-3 group">
+          <div className="h-11 w-11 bg-yellow-300 border-3 border-black flex items-center justify-center font-black text-2xl text-black shadow-[3px_3px_0px_0px_#000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[5px_5px_0px_0px_#000] transition-all">
+            G
+          </div>
+          <div className="flex flex-col">
+            <span className="text-2xl font-black tracking-tight text-black uppercase">
+              GeoSandbox
+            </span>
+            <span className="text-[10px] font-bold tracking-widest bg-cyan-300 text-black border border-black px-1.5 py-0.2 w-max">
+              DASHBOARD V2
+            </span>
+          </div>
         </a>
-        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button type="button" className="text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-3 py-2 focus:outline-none">Get started</button>
-          <button data-collapse-toggle="navbar-sticky" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base md:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary" aria-controls="navbar-sticky" aria-expanded="false">
-            <span className="sr-only">Open main menu</span>
-            <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" /></svg>
-          </button>
-        </div>
-        <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-default rounded-base bg-neutral-secondary-soft md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-neutral-primary">
+
+        {/* Navigation Links */}
+        <nav aria-label="Global" className="hidden md:block">
+          <ul className="flex items-center gap-2 text-sm font-bold">
             <li>
-              <a href="#" className="block py-2 px-3 text-white bg-brand rounded-sm md:bg-transparent md:text-fg-brand md:p-0" aria-current="page">Home</a>
+              <a
+                className="text-black border-2 border-transparent hover:border-black hover:bg-yellow-300 hover:shadow-[3px_3px_0px_0px_#000] px-3.5 py-2 transition-all block"
+                href="#"
+              >
+                Tentang Kami
+              </a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">About</a>
+              <a
+                className="text-black border-2 border-transparent hover:border-black hover:bg-lime-300 hover:shadow-[3px_3px_0px_0px_#000] px-3.5 py-2 transition-all block"
+                href="#"
+              >
+                Layanan
+              </a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Services</a>
+              <a
+                className="text-black border-2 border-transparent hover:border-black hover:bg-cyan-300 hover:shadow-[3px_3px_0px_0px_#000] px-3.5 py-2 transition-all block"
+                href="#"
+              >
+                Proyek
+              </a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Contact</a>
+              <a
+                className="text-black border-2 border-transparent hover:border-black hover:bg-purple-300 hover:shadow-[3px_3px_0px_0px_#000] px-3.5 py-2 transition-all block"
+                href="#"
+              >
+                Kontak
+              </a>
+            </li>
+            <li>
+              <a
+                className="text-black border-2 border-transparent hover:border-black hover:bg-purple-300 hover:shadow-[3px_3px_0px_0px_#000] px-3.5 py-2 transition-all block"
+                href="/atemplate-ui"
+              >
+                Component UI
+              </a>
+
             </li>
           </ul>
+        </nav>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            <a
+              className="bg-white text-black border-2 border-black font-extrabold px-4 py-2 text-sm shadow-[3px_3px_0px_0px_#000] hover:bg-zinc-100 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-[2px_2px_0px_0px_#000] transition-all"
+              href="/login"
+            >
+              Masuk
+            </a>
+
+            <a
+              className="hidden sm:block bg-yellow-300 text-black border-2 border-black font-extrabold px-4 py-2 text-sm shadow-[3px_3px_0px_0px_#000] hover:bg-yellow-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-[2px_2px_0px_0px_#000] transition-all"
+              href="/register"
+            >
+              Daftar
+            </a>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="block border-2 border-black bg-white p-2 text-black shadow-[3px_3px_0px_0px_#000] md:hidden hover:bg-yellow-300"
+          >
+            <span className="sr-only">Toggle menu</span>
+            <svg
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="3"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
       </div>
-    </nav>
-
+    </header>
   )
 }
 

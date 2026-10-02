@@ -3,6 +3,7 @@ import HomePage from "../pages/HomePage/HomePage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import React from "react";
+import ComponentUIPage from "../pages/ComponentUIPage/ComponentUIPage";
 
 export const router = createBrowserRouter([
     {
@@ -16,5 +17,9 @@ export const router = createBrowserRouter([
     {
         path: '/register',
         element: React.createElement(RegisterPage)
+    },
+    {
+        path: '/template-ui',
+        element: React.createElement(ComponentUIPage)
     }
 ])
