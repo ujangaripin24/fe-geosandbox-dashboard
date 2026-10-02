@@ -1,5 +1,5 @@
-import React from 'react'
-import { FaAlignJustify, FaBookmark } from 'react-icons/fa6'
+import React, { useState } from 'react'
+import { FaAlignJustify, FaBookmark, FaX } from 'react-icons/fa6'
 
 interface HeaderDashboardProps {
   isSidebarOpen?: boolean
@@ -10,8 +10,11 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
   isSidebarOpen = false,
   onToggleSidebar
 }) => {
+  const [isOpenProfile, setIsOpenProfile] = useState(false);
+  const [isModalExit, setIsModalExit] = useState(false);
+
   return (
-    <header className="bg-white border-b-4 border-black px-4 sm:px-6 h-16 flex items-center justify-between z-20 shrink-0 relative">
+    <header className="bg-white border-b-4 border-black px-4 sm:px-6 h-16 flex items-center justify-between z-50 shrink-0 relative">
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -42,16 +45,75 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
       </div>
 
       <div className="flex items-center gap-3">
-        <a
-          href="/login"
-          className="flex items-center gap-2 bg-lime-300 text-black border-2 border-black px-3.5 py-1.5 text-xs sm:text-sm font-black uppercase shadow-[3px_3px_0px_0px_#000] hover:bg-lime-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+        <div
+          onClick={() => setIsOpenProfile(!isOpenProfile)}
+          className="flex items-center bg-purple-300 text-black font-black text-sm uppercase border-3 border-black px-6 py-3 shadow-[4px_4px_0px_0px_#000] hover:bg-purple-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer shrink-0"
         >
-          <span>Kembali Ke Login</span>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 16l4-4m0 0l-4-4m4 4H7" />
-          </svg>
-        </a>
+          <span>User001</span>
+        </div>
+        {
+          isOpenProfile && (
+            <>
+              <div className="absolute right-20 top-full mt-2 bg-white border-4 border-black shadow-[6px_6px_0px_0px_#000] z-20 overflow-hidden">
+                <div className="cursor-pointer block px-4 py-2.5 font-bold text-sm hover:bg-lime-300 border-b-2 border-black transition-all">
+                  Ekspor Peta PDF
+                </div>
+                <div className="cursor-pointer block px-4 py-2.5 font-bold text-sm hover:bg-cyan-300 border-b-2 border-black transition-all">
+                  Unduh Dataset CSV
+                </div>
+                <div
+                  onClick={() => setIsModalExit(true)}
+                  className="cursor-pointer block px-4 py-2.5 font-bold text-sm hover:bg-pink-300 transition-all">
+                  Keluar
+                </div>
+              </div>
+            </>
+          )}
       </div>
+      {
+        isModalExit && (
+          <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+              <div className="bg-white border-4 border-black p-6 sm:p-8 shadow-[10px_10px_0px_0px_#000] max-w-lg w-full space-y-6 animate-in fade-in zoom-in duration-150">
+                <div className="flex items-center justify-between border-b-3 border-black pb-3">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-xl uppercase">Konfirmasi Tindakan</h3>
+                  </div>
+                  <button
+                    onClick={() => setIsModalExit(false)}
+                    className="bg-pink-300 border-2 border-black font-black h-8 w-8 flex items-center justify-center hover:bg-pink-400 transition-all cursor-pointer"
+                  >
+                    <FaX />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm font-bold leading-relaxed text-zinc-800">
+                    Keluar Dari Dashboard?
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-3 border-t-2 border-black">
+                  <button
+                    onClick={() => setIsModalExit(false)}
+                    className="bg-white text-black font-black text-xs uppercase border-2 border-black px-4 py-2 hover:bg-zinc-100 transition-all cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert('Tindakan Berhasil!')
+                      setIsModalExit(false)
+                    }}
+                    className="bg-lime-300 text-black font-black text-xs uppercase border-2 border-black px-4 py-2 shadow-[2px_2px_0px_0px_#000] hover:bg-lime-400 transition-all cursor-pointer"
+                  >
+                    Ya
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
     </header>
   )
 }
