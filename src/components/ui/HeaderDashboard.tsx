@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaAlignJustify, FaBookmark, FaX } from 'react-icons/fa6'
 import { useAuthStore } from '../../store/auth.store'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 interface HeaderDashboardProps {
   isSidebarOpen?: boolean
@@ -63,6 +63,11 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
           isOpenProfile && (
             <>
               <div className="absolute right-20 top-full mt-2 bg-white border-4 border-black shadow-[6px_6px_0px_0px_#000] z-20 overflow-hidden">
+                <div className="cursor-pointer block px-4 py-2.5 font-bold text-sm hover:bg-pink-300 border-b-2 border-black transition-all">
+                  <Link to={'/dashboard/profile'}>
+                    Profile
+                  </Link>
+                </div>
                 <div className="cursor-pointer block px-4 py-2.5 font-bold text-sm hover:bg-lime-300 border-b-2 border-black transition-all">
                   Ekspor Peta PDF
                 </div>

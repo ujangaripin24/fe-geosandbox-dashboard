@@ -11,8 +11,14 @@ services:
   server:
     build:
       context: .
-    environment:
-      NODE_ENV: production
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 1024M # Batasi maksimal 512MB RAM
+        reservations:
+          memory: 512M # Alokasi awal 256MB RAM
     ports:
       - 5173:5173
 
@@ -48,4 +54,3 @@ services:
 # secrets:
 #   db-password:
 #     file: db/password.txt
-

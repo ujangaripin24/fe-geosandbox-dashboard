@@ -12,6 +12,7 @@ export const apiClient = axios.create({
   }
 })
 
+// Request Interceptor
 apiClient.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token
@@ -24,6 +25,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
+// Response Interceptor for handling token refresh
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {

@@ -7,6 +7,7 @@ import ComponentUIPage from "../pages/ComponentUIPage/ComponentUIPage";
 import Layout from "../components/ui/Layout";
 import DashboardPage from "../pages/DashboardPage/DashboardPage";
 import { ProtectedRoute } from "../components/ui/AuthGuards";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
 
 export const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
                     {
                         index: true,
                         element: React.createElement(DashboardPage)
+                    },
+                    {
+                        path: 'profile',
+                        element: React.createElement(ProfilePage)
                     }
                 ]
             }
