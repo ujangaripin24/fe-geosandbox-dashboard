@@ -107,8 +107,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
         {user && (
           <div className="bg-yellow-100 border-2 border-black p-3 shadow-[2px_2px_0px_0px_#000]">
             <p className="text-[10px] font-black uppercase text-zinc-500">User Login:</p>
-            <p className="text-xs font-black uppercase text-black truncate">{user.username}</p>
-            <p className="text-[10px] font-extrabold text-zinc-600 truncate">{user.email}</p>
+            <p className="text-xs font-black uppercase text-black truncate">{user?.username}</p>
+            <p className="text-[10px] font-extrabold text-zinc-600 truncate">{user?.email}</p>
           </div>
         )}
 

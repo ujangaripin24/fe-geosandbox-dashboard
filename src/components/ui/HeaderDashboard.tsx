@@ -57,7 +57,7 @@ const HeaderDashboard: React.FC<HeaderDashboardProps> = ({
           onClick={() => setIsOpenProfile(!isOpenProfile)}
           className="flex items-center bg-purple-300 text-black font-black text-sm uppercase border-3 border-black px-6 py-3 shadow-[4px_4px_0px_0px_#000] hover:bg-purple-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer shrink-0"
         >
-          <span>{user.username}</span>
+          <span>{user?.username || 'User'}</span>
         </div>
         {
           isOpenProfile && (
