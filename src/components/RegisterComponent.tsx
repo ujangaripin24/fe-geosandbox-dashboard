@@ -1,11 +1,18 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/auth.store'
 
 const RegisterComponent: React.FC = () => {
+  const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [confPassword, setConfPassword] = useState('')
   const [currentSlider, setCurrentSlider] = useState<number>(0)
+  const [localError, setLocalError] = useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = useState<string | null>(null)
+
+  const { registerUser, isLoading, error, clearError } = useAuthStore()
 
   const adsData = [
     {
@@ -25,14 +32,35 @@ const RegisterComponent: React.FC = () => {
     }
   ]
 
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Login submitted:', { username, email, password, confirmPassword })
+    clearError()
+    setLocalError(null)
+    setSuccessMsg(null)
+
+    if (password !== confPassword) {
+      setLocalError('Konfirmasi kata sandi tidak cocok')
+      return
+    }
+
+    try {
+      const msg = await registerUser({ username, email, password, confPassword })
+      setSuccessMsg(msg || 'Pendaftaran akun berhasil! Silakan masuk.')
+      setTimeout(() => {
+        navigate('/login')
+      }, 2000)
+    } catch {
+      // Error handled in store
+    }
   }
+
+  const activeError = localError || error
+
   return (
-    <div className='min-h-screen w-full flex items-center justify-center p-4 sm:p-8 lg:p-12 bg-amber-50/40 text-black'>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 lg:p-12 bg-amber-50/40 text-black">
       <div className="max-w-6xl w-full flex flex-col lg:flex-row gap-8 items-stretch">
+
+        {/* Left Column: Register Form Card */}
         <div className="w-full lg:w-1/2 bg-white border-4 border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] flex flex-col justify-between space-y-6">
           <div>
             <div className="flex items-center justify-between mb-8">
@@ -45,88 +73,112 @@ const RegisterComponent: React.FC = () => {
                     GeoSandbox
                   </span>
                   <span className="text-[11px] font-extrabold uppercase bg-cyan-300 text-black border border-black px-1.5 py-0.5 mt-1 inline-block">
-                    Portal Masuk
+                    Pendaftaran Akun
                   </span>
                 </div>
               </div>
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-black uppercase text-black tracking-tight">
-              Selamat Datang!
+              Daftar Akun Baru
             </h1>
             <p className="mt-2 text-sm font-bold text-zinc-700">
-              Masukkan kredensial Anda untuk mengakses dashboard.
+              Buat akun Anda untuk mulai mengelola dashboard geospasial.
             </p>
 
-            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            {/* Success Alert Banner */}
+            {successMsg && (
+              <div className="mt-4 bg-lime-200 border-3 border-black p-3.5 shadow-[4px_4px_0px_0px_#000] flex items-center gap-3">
+                <span className="text-xl">✅</span>
+                <div>
+                  <p className="font-black text-xs uppercase text-lime-900">Registrasi Berhasil</p>
+                  <p className="text-xs font-bold text-black">{successMsg}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Error Alert Banner */}
+            {activeError && !successMsg && (
+              <div className="mt-4 bg-pink-200 border-3 border-black p-3.5 shadow-[4px_4px_0px_0px_#000] flex items-center gap-3">
+                <span className="text-xl">⚠️</span>
+                <div>
+                  <p className="font-black text-xs uppercase text-pink-900">Gagal Mendaftar</p>
+                  <p className="text-xs font-bold text-black">{activeError}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Form */}
+            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-1.5">
                 <label className="block text-xs font-black uppercase tracking-wider text-black">
                   Username
                 </label>
-                <div className="relative">
-                  <input
-                    type="username"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="username"
-                    className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-black">
-                  Email
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@domain.com"
-                    className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-black uppercase tracking-wider text-black">
-                    Kata Sandi
-                  </label>
-                </div>
                 <input
-                  type="password"
+                  type="text"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="**********"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="username"
                   className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-black uppercase tracking-wider text-black">
-                    Konfirmasi Kata Sandi
-                  </label>
-                </div>
+                <label className="block text-xs font-black uppercase tracking-wider text-black">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@domain.com"
+                  className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-black uppercase tracking-wider text-black">
+                  Kata Sandi
+                </label>
                 <input
                   type="password"
                   required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="**********"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-black uppercase tracking-wider text-black">
+                  Konfirmasi Kata Sandi
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={confPassword}
+                  onChange={(e) => setConfPassword(e.target.value)}
+                  placeholder="••••••••"
                   className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-cyan-300 text-black font-black text-base uppercase tracking-wider border-3 border-black p-3.5 shadow-[4px_4px_0px_0px_#000] hover:bg-cyan-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer"
+                disabled={isLoading}
+                className="w-full bg-cyan-300 text-black font-black text-base uppercase tracking-wider border-3 border-black p-3.5 shadow-[4px_4px_0px_0px_#000] hover:bg-cyan-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#000] transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                Daftar
+                {isLoading ? (
+                  <span>Mendaftarkan Akun...</span>
+                ) : (
+                  <>
+                    <span>Daftar Akun Sekarang</span>
+                    <span>➔</span>
+                  </>
+                )}
               </button>
             </form>
 
@@ -168,22 +220,19 @@ const RegisterComponent: React.FC = () => {
           </div>
         </div>
 
+        {/* Right Column: Showcase Slider */}
         <div className="hidden lg:flex lg:w-1/2 bg-white border-4 border-black p-10 shadow-[10px_10px_0px_0px_#000] flex-col justify-between relative overflow-hidden">
-          <div className='flex-1'>
+          <div className="flex-1">
             <span className="bg-purple-300 border-2 absolute top-5 right-10 border-black px-3 py-1 font-black text-xs uppercase shadow-[2px_2px_0px_0px_#000] -rotate-6">
-              TAG MIRING
+              GEOSANDBOX
             </span>
           </div>
-          <div className="w-full h-64 border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-zinc-100 overflow-hidden relative">
-            <img
-              src={
-                currentSlider === 0 ? "https://unsplash.com" :
-                  currentSlider === 1 ? "https://unsplash.com" :
-                    "https://unsplash.com"
-              }
-              alt={adsData[currentSlider].title}
-              className="w-full h-full object-cover transition-all duration-500"
-            />
+          <div className="w-full h-64 border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-zinc-100 overflow-hidden relative flex items-center justify-center p-6 bg-linear-to-br from-yellow-100 to-cyan-100">
+            <div className="text-center space-y-2">
+              <span className="text-4xl">🗺️</span>
+              <h3 className="text-xl font-black uppercase text-black">{adsData[currentSlider].title}</h3>
+              <p className="text-xs font-bold text-zinc-700">{adsData[currentSlider].desc}</p>
+            </div>
           </div>
 
           <div className="mt-8 space-y-3 flex-1">

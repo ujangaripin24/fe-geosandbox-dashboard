@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { authService, type LoginPayload, type UserProfile } from '../services/auth.service'
+import { authService, type LoginPayload, type RegisterPayload, type UserProfile } from '../services/auth.service'
 
 interface AuthState {
     token: string | null
@@ -8,6 +8,7 @@ interface AuthState {
     isLoading: boolean
     isInitialized: boolean
     error: string | null
+    message: string | null
 
     setToken: (token: string | null) => void
     setUser: (user: UserProfile | null) => void
@@ -15,6 +16,7 @@ interface AuthState {
     login: (credentials: LoginPayload) => Promise<void>
     checkAuth: () => Promise<void>
     logout: () => Promise<void>
+    registerUser: (credentials: RegisterPayload) => Promise<string>
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -24,6 +26,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     isLoading: false,
     isInitialized: false,
     error: null,
+    message: null,
 
     setToken: (token: string | null) => set({ token, isAuthenticated: !!token }),
     setUser: (user: UserProfile | null) => set({ user }),
@@ -107,5 +110,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 error: null
             })
         }
+    },
+
+    registerUser: async (credentials: RegisterPayload) => {
+        set({ isLoading: true, error: null })
+        try {
+            const response = await authService.registerUser(credentials)
+            set({ isLoading: false, isInitialized: true, error: null })
+            return response
+        } catch (err: any) {
+            set({
+                error: err.message || 'Register gagal',
+                isLoading: false,
+                isAuthenticated: false,
+                token: null,
+                user: null
+            })
+            throw err
+        }
     }
+
 }))

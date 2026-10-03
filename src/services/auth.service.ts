@@ -10,6 +10,13 @@ export interface UserProfile {
   updatedAt: string
 }
 
+export interface RegisterPayload {
+  username: string,
+  email: string,
+  password: string,
+  confPassword: string
+}
+
 export interface LoginPayload {
   email: string
   password: string
@@ -64,5 +71,15 @@ export const authService = {
     } catch {
       // Ignore network errors during logout
     }
-  }
+  },
+
+  async registerUser(credentials: RegisterPayload): Promise<string> {
+    try {
+      const response = await apiClient.post('/auth/register', credentials)
+      return response.data.message
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error))
+    }
+  },
+
 }

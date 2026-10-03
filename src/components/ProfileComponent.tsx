@@ -2,11 +2,54 @@ import React, { useEffect } from 'react'
 import { useUserStore } from '../store/user.store'
 
 const ProfileComponent: React.FC = () => {
-  const { user, profileDetail, isLoading, error } = useUserStore()
+  const { user, profileDetail, updateDetail, isLoading, error } = useUserStore()
+  const [formData, setFormData] = React.useState({
+    username: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    gender: ''
+  })
+  const [savingField, setSavingField] = React.useState<string | null>(null)
+  const [saveSuccess, setSaveSuccess] = React.useState<string | null>(null)
 
   useEffect(() => {
     profileDetail()
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        gender: user.gender || ''
+      })
+    }
+  }, [user])
+
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleBlur = async (field: keyof typeof formData) => {
+    const newValue = formData[field]
+    // Jangan kirim request jika nilainya tidak berubah dari store
+    if (user && user[field] === newValue) return
+
+    try {
+      setSavingField(field)
+      setSaveSuccess(null)
+      await updateDetail({ [field]: newValue })
+      setSaveSuccess(`Berhasil mengupdate ${field}!`)
+      setTimeout(() => setSaveSuccess(null), 3000)
+    } catch {
+      // Error ditangani oleh store
+    } finally {
+      setSavingField(null)
+    }
+  }
 
   return (
     <div className="bg-white border-4 border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] relative overflow-hidden space-y-6">
@@ -30,8 +73,15 @@ const ProfileComponent: React.FC = () => {
         </button>
       </div>
 
+      {/* Auto Save Notification Banner */}
+      {saveSuccess && (
+        <div className="bg-lime-200 border-3 border-black p-3 shadow-[4px_4px_0px_0px_#000] font-black uppercase text-xs text-lime-900">
+          ✅ {saveSuccess}
+        </div>
+      )}
+
       {/* Loading Banner */}
-      {isLoading && (
+      {isLoading && !savingField && (
         <div className="bg-yellow-100 border-3 border-black p-4 shadow-[4px_4px_0px_0px_#000] text-center font-black uppercase text-sm animate-pulse">
           Memuat Detail Profil dari Server...
         </div>
@@ -42,7 +92,7 @@ const ProfileComponent: React.FC = () => {
         <div className="bg-pink-200 border-3 border-black p-4 shadow-[4px_4px_0px_0px_#000] flex items-center gap-3">
           <span className="text-xl">⚠️</span>
           <div>
-            <p className="font-black text-xs uppercase text-pink-900">Gagal Memuat Profil</p>
+            <p className="font-black text-xs uppercase text-pink-900">Gagal Memuat / Mengupdate Profil</p>
             <p className="text-xs font-bold text-black">{error}</p>
           </div>
         </div>
@@ -52,9 +102,20 @@ const ProfileComponent: React.FC = () => {
       {!isLoading && user && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
             <div className="bg-zinc-50 border-3 border-black p-4 shadow-[3px_3px_0px_0px_#000] space-y-1">
-              <span className="text-[10px] font-black uppercase text-zinc-500">Username</span>
-              <p className="text-base font-black text-black">{user.username}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-zinc-500">Username</span>
+                {savingField === 'username' && <span className="text-[10px] font-bold text-amber-600 animate-pulse">Menyimpan...</span>}
+              </div>
+              <input
+                type="text"
+                placeholder="Ketik sesuatu di sini..."
+                value={formData.username}
+                onChange={(e) => handleChange('username', e.target.value)}
+                onBlur={() => handleBlur('username')}
+                className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
+              />
             </div>
 
             <div className="bg-zinc-50 border-3 border-black p-4 shadow-[3px_3px_0px_0px_#000] space-y-1">
@@ -63,24 +124,69 @@ const ProfileComponent: React.FC = () => {
             </div>
 
             <div className="bg-zinc-50 border-3 border-black p-4 shadow-[3px_3px_0px_0px_#000] space-y-1">
-              <span className="text-[10px] font-black uppercase text-zinc-500">Nama Depan</span>
-              <p className="text-base font-black text-black">{user.firstName}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-zinc-500">Nama Depan</span>
+                {savingField === 'firstName' && <span className="text-[10px] font-bold text-amber-600 animate-pulse">Menyimpan...</span>}
+              </div>
+              <input
+                type="text"
+                placeholder="Ketik sesuatu di sini..."
+                value={formData.firstName}
+                onChange={(e) => handleChange('firstName', e.target.value)}
+                onBlur={() => handleBlur('firstName')}
+                className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
+              />
             </div>
 
             <div className="bg-zinc-50 border-3 border-black p-4 shadow-[3px_3px_0px_0px_#000] space-y-1">
-              <span className="text-[10px] font-black uppercase text-zinc-500">Nama Belakang</span>
-              <p className="text-base font-black text-black">{user.lastName}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-zinc-500">Nama Belakang</span>
+                {savingField === 'lastName' && <span className="text-[10px] font-bold text-amber-600 animate-pulse">Menyimpan...</span>}
+              </div>
+              <input
+                type="text"
+                placeholder="Ketik sesuatu di sini..."
+                value={formData.lastName}
+                onChange={(e) => handleChange('lastName', e.target.value)}
+                onBlur={() => handleBlur('lastName')}
+                className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
+              />
             </div>
 
             <div className="bg-zinc-50 border-3 border-black p-4 shadow-[3px_3px_0px_0px_#000] space-y-1">
-              <span className="text-[10px] font-black uppercase text-zinc-500">Nomor Telepon</span>
-              <p className="text-base font-black text-black">{user.phone}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-zinc-500">Nomor Telepon</span>
+                {savingField === 'phone' && <span className="text-[10px] font-bold text-amber-600 animate-pulse">Menyimpan...</span>}
+              </div>
+              <input
+                type="text"
+                placeholder="Ketik sesuatu di sini..."
+                value={formData.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                onBlur={() => handleBlur('phone')}
+                className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all"
+              />
             </div>
 
             <div className="bg-zinc-50 border-3 border-black p-4 shadow-[3px_3px_0px_0px_#000] space-y-1">
-              <span className="text-[10px] font-black uppercase text-zinc-500">Jenis Kelamin</span>
-              <p className="text-base font-black text-black">{user.gender}</p>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-zinc-500">Jenis Kelamin</span>
+                {savingField === 'gender' && (
+                  <span className="text-[10px] font-bold text-amber-600 animate-pulse">Menyimpan...</span>
+                )}
+              </div>
+              <select
+                value={formData.gender}
+                onChange={(e) => handleChange('gender', e.target.value)}
+                onBlur={() => handleBlur('gender')}
+                className="w-full bg-white border-3 border-black p-3 text-sm font-bold text-black placeholder-zinc-400 focus:outline-none focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_#000] transition-all appearance-none cursor-pointer"
+              >
+                <option value="tidak ada" disabled hidden>Tidak Ada</option>
+                <option value="pria">Pria</option>
+                <option value="wanita">Wanita</option>
+              </select>
             </div>
+
           </div>
 
           {/* User Address Detail List if Available */}
