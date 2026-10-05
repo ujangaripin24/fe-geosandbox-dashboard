@@ -24,6 +24,14 @@ export interface UpdateUserPayload {
   link_pict?: string;
 }
 
+export interface AddAddressUserPayload {
+  negara?: string,
+  address?: string,
+  kota?: string,
+  provinsi?: string,
+  kode_pos?: string,
+}
+
 export const userService = {
   async profileDetail(): Promise<UserDetailProfile> {
     try {
@@ -38,6 +46,15 @@ export const userService = {
   async updateDetail(payload: UpdateUserPayload): Promise<string> {
     try {
       const response = await apiClient.put('/users/update', payload)
+      return response.data.message
+    } catch (error: any) {
+      throw new Error(extractErrorMessage(error))
+    }
+  },
+
+  async addAddressUser(payload: AddAddressUserPayload): Promise<string> {
+    try {
+      const response = await apiClient.post('/user/create-address', payload);
       return response.data.message
     } catch (error: any) {
       throw new Error(extractErrorMessage(error))
