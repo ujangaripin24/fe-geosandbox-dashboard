@@ -69,8 +69,6 @@ const ProfileComponent: React.FC = () => {
     }
   }
 
-  console.log("detail profile: ", user?.detail);
-
   const handleAddressSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     clearError()
