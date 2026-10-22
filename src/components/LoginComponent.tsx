@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../store/auth.store'
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/auth.store";
+import { FaArrowRight, FaCheck } from "react-icons/fa6";
 
 const LoginComponent: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     login,
     logout,
@@ -13,38 +14,37 @@ const LoginComponent: React.FC = () => {
     isLoading,
     isInitialized,
     error,
-    clearError
-  } = useAuthStore()
+    clearError,
+  } = useAuthStore();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     if (!isInitialized) {
-      checkAuth()
+      checkAuth();
     }
-  }, [isInitialized, checkAuth])
+  }, [isInitialized, checkAuth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    clearError()
+    e.preventDefault();
+    clearError();
     try {
-      await login({ email, password })
-      navigate('/dashboard')
+      await login({ email, password });
+      navigate("/dashboard");
     } catch {
       // Error is caught and stored in Zustand error state
     }
-  }
+  };
 
   const handleLogout = async () => {
-    await logout()
-  }
+    await logout();
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 lg:p-12 bg-amber-50/40 text-black">
       <div className="max-w-6xl w-full flex flex-col lg:flex-row gap-8 items-stretch">
-        
         {/* Left Column: Login Form or Authenticated Session Card */}
         <div className="w-full lg:w-1/2 bg-white border-4 border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] flex flex-col justify-between space-y-6">
           <div>
@@ -65,12 +65,11 @@ const LoginComponent: React.FC = () => {
               </div>
             </div>
 
-            {/* IF USER IS ALREADY LOGGED IN: Replace Form with Active Session View */}
             {isAuthenticated && user ? (
               <div className="space-y-6 animate-in fade-in zoom-in duration-200">
                 <div className="bg-lime-200 border-3 border-black p-4 shadow-[4px_4px_0px_0px_#000] space-y-2">
                   <div className="inline-block bg-black text-white px-2 py-0.5 font-black text-[10px] uppercase">
-                    ✓ SESI AKTIF TERVERIFIKASI
+                    <FaCheck /> SESI AKTIF TERVERIFIKASI
                   </div>
                   <h2 className="text-2xl font-black uppercase text-black">
                     Anda Sudah Login!
@@ -83,23 +82,35 @@ const LoginComponent: React.FC = () => {
                 {/* Profile Card Info */}
                 <div className="bg-white border-3 border-black p-5 shadow-[4px_4px_0px_0px_#000] space-y-3">
                   <div className="flex justify-between items-center border-b-2 border-black pb-2">
-                    <span className="text-xs font-black text-zinc-500 uppercase">Username:</span>
-                    <span className="text-sm font-black text-black">{user.username}</span>
+                    <span className="text-xs font-black text-zinc-500 uppercase">
+                      Username:
+                    </span>
+                    <span className="text-sm font-black text-black">
+                      {user.username}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center border-b-2 border-black pb-2">
-                    <span className="text-xs font-black text-zinc-500 uppercase">Email:</span>
-                    <span className="text-sm font-black text-black">{user.email}</span>
+                    <span className="text-xs font-black text-zinc-500 uppercase">
+                      Email:
+                    </span>
+                    <span className="text-sm font-black text-black">
+                      {user.email}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center border-b-2 border-black pb-2">
-                    <span className="text-xs font-black text-zinc-500 uppercase">Role:</span>
+                    <span className="text-xs font-black text-zinc-500 uppercase">
+                      Role:
+                    </span>
                     <span className="text-xs font-black uppercase bg-purple-300 border border-black px-2 py-0.5">
                       {user.role}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-zinc-500 uppercase">Status Akun:</span>
+                    <span className="text-xs font-black text-zinc-500 uppercase">
+                      Status Akun:
+                    </span>
                     <span className="text-xs font-black uppercase bg-lime-300 border border-black px-2 py-0.5">
-                      {user.isActive ? 'Aktif' : 'Non-Aktif'}
+                      {user.isActive ? "Aktif" : "Non-Aktif"}
                     </span>
                   </div>
                 </div>
@@ -108,11 +119,13 @@ const LoginComponent: React.FC = () => {
                 <div className="space-y-3 pt-2">
                   <button
                     type="button"
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate("/dashboard")}
                     className="w-full bg-yellow-300 text-black font-black text-sm uppercase tracking-wider border-3 border-black p-3.5 shadow-[4px_4px_0px_0px_#000] hover:bg-yellow-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
                     <span>Lanjut Ke Dashboard</span>
-                    <span>➔</span>
+                    <span>
+                      <FaArrowRight />
+                    </span>
                   </button>
 
                   <button
@@ -121,7 +134,9 @@ const LoginComponent: React.FC = () => {
                     disabled={isLoading}
                     className="w-full bg-pink-300 text-black font-black text-sm uppercase tracking-wider border-3 border-black p-3 shadow-[4px_4px_0px_0px_#000] hover:bg-pink-400 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
                   >
-                    {isLoading ? 'Mengeluarkan Sesi...' : 'Keluar / Logout Sesi Ini'}
+                    {isLoading
+                      ? "Mengeluarkan Sesi..."
+                      : "Keluar / Logout Sesi Ini"}
                   </button>
                 </div>
               </div>
@@ -140,7 +155,9 @@ const LoginComponent: React.FC = () => {
                   <div className="mt-4 bg-pink-200 border-3 border-black p-3.5 shadow-[4px_4px_0px_0px_#000] flex items-center gap-3">
                     <span className="text-xl">⚠️</span>
                     <div>
-                      <p className="font-black text-xs uppercase text-pink-900">Gagal Masuk</p>
+                      <p className="font-black text-xs uppercase text-pink-900">
+                        Gagal Masuk
+                      </p>
                       <p className="text-xs font-bold text-black">{error}</p>
                     </div>
                   </div>
@@ -214,7 +231,9 @@ const LoginComponent: React.FC = () => {
                     ) : (
                       <>
                         <span>Masuk Ke Dashboard</span>
-                        <span>➔</span>
+                        <span>
+                          <FaArrowRight />
+                        </span>
                       </>
                     )}
                   </button>
@@ -253,7 +272,7 @@ const LoginComponent: React.FC = () => {
           {!isAuthenticated && (
             <div className="pt-6 border-t-2 border-black text-center">
               <p className="text-xs font-extrabold uppercase text-black">
-                Belum punya akun?{' '}
+                Belum punya akun?{" "}
                 <a
                   href="/register"
                   className="bg-yellow-300 border border-black px-2 py-1 font-black underline hover:bg-yellow-400 transition-all inline-block ml-1 shadow-[2px_2px_0px_0px_#000]"
@@ -282,35 +301,43 @@ const LoginComponent: React.FC = () => {
 
             <div className="bg-purple-200 border-3 border-black p-5 shadow-[5px_5px_0px_0px_#000] rotate-1">
               <p className="text-sm font-extrabold text-black leading-relaxed">
-                Platform terpadu untuk pemetaan lokasi, analisis data spasial, dan monitoring statistik secara langsung dan interaktif.
+                Platform terpadu untuk pemetaan lokasi, analisis data spasial,
+                dan monitoring statistik secara langsung dan interaktif.
               </p>
             </div>
 
             <div className="grid grid-cols-3 gap-3 pt-4">
               <div className="bg-cyan-200 border-2 border-black p-3 text-center shadow-[3px_3px_0px_0px_#000]">
                 <p className="text-2xl font-black text-black">100%</p>
-                <p className="text-[10px] font-black uppercase text-black">Real-Time</p>
+                <p className="text-[10px] font-black uppercase text-black">
+                  Real-Time
+                </p>
               </div>
               <div className="bg-lime-200 border-2 border-black p-3 text-center shadow-[3px_3px_0px_0px_#000]">
                 <p className="text-2xl font-black text-black">50K+</p>
-                <p className="text-[10px] font-black uppercase text-black">Data Peta</p>
+                <p className="text-[10px] font-black uppercase text-black">
+                  Data Peta
+                </p>
               </div>
               <div className="bg-yellow-200 border-2 border-black p-3 text-center shadow-[3px_3px_0px_0px_#000]">
                 <p className="text-2xl font-black text-black">99.9%</p>
-                <p className="text-[10px] font-black uppercase text-black">Uptime</p>
+                <p className="text-[10px] font-black uppercase text-black">
+                  Uptime
+                </p>
               </div>
             </div>
           </div>
 
           <div className="border-t-3 border-black pt-4 flex items-center justify-between text-xs font-black uppercase">
-            <span className="bg-black text-white px-2 py-0.5">GEOSANDBOX INC</span>
+            <span className="bg-black text-white px-2 py-0.5">
+              GEOSANDBOX INC
+            </span>
             <span>SECURE ENCRYPTED 🔒</span>
           </div>
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginComponent
+export default LoginComponent;

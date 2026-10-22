@@ -1,6 +1,16 @@
-import React from 'react'
+import React, { useEffect } from "react";
+import { useAuthStore } from "../../store/auth.store";
 
 const MainHeader: React.FC = () => {
+  const { isAuthenticated, isLoading, user, isInitialized, checkAuth } =
+    useAuthStore();
+
+  useEffect(() => {
+    if (!isInitialized) {
+      checkAuth();
+    }
+  }, [isInitialized, checkAuth]);
+
   return (
     <header className="bg-white border-b-4 border-black sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -61,33 +71,40 @@ const MainHeader: React.FC = () => {
               >
                 Component UI
               </a>
-
             </li>
           </ul>
         </nav>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3">
-            <a
-              className="bg-white text-black border-2 border-black font-extrabold px-4 py-2 text-sm shadow-[3px_3px_0px_0px_#000] hover:bg-zinc-100 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-[2px_2px_0px_0px_#000] transition-all"
-              href="/login"
-            >
-              Masuk
-            </a>
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : isAuthenticated && user ? (
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-black uppercase bg-purple-300 border border-black px-2 py-0.5">
+                {user.username}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <a
+                className="bg-white text-black border-2 border-black font-extrabold px-4 py-2 text-sm shadow-[3px_3px_0px_0px_#000] hover:bg-zinc-100 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-[2px_2px_0px_0px_#000] transition-all"
+                href="/login"
+              >
+                Masuk
+              </a>
 
-            <a
-              className="hidden sm:block bg-yellow-300 text-black border-2 border-black font-extrabold px-4 py-2 text-sm shadow-[3px_3px_0px_0px_#000] hover:bg-yellow-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-[2px_2px_0px_0px_#000] transition-all"
-              href="/register"
-            >
-              Daftar
-            </a>
-          </div>
+              <a
+                className="hidden sm:block bg-yellow-300 text-black border-2 border-black font-extrabold px-4 py-2 text-sm shadow-[3px_3px_0px_0px_#000] hover:bg-yellow-400 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-[2px_2px_0px_0px_#000] transition-all"
+                href="/register"
+              >
+                Daftar
+              </a>
+            </div>
+          )}
 
           {/* Mobile menu button */}
-          <button
-            className="block border-2 border-black bg-white p-2 text-black shadow-[3px_3px_0px_0px_#000] md:hidden hover:bg-yellow-300"
-          >
+          <button className="block border-2 border-black bg-white p-2 text-black shadow-[3px_3px_0px_0px_#000] md:hidden hover:bg-yellow-300">
             <span className="sr-only">Toggle menu</span>
             <svg
               aria-hidden="true"
@@ -98,13 +115,17 @@ const MainHeader: React.FC = () => {
               stroke="currentColor"
               strokeWidth="3"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default MainHeader
+export default MainHeader;

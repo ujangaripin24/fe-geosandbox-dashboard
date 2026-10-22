@@ -51,7 +51,6 @@ const ProfileComponent: React.FC = () => {
   const [isModalAddressOpen, setIsModalAddressOpen] = useState(false);
   const [isModalDeleteAddress, setIsModalDeleteAddress] = useState(false);
 
-  // Filter & Search local state
   const [searchInput, setSearchInput] = useState(paramsLoginHistory.search || "");
   const [sortOrder, setSortOrder] = useState<string>(paramsLoginHistory.sort || "terbaru");
   const [pageSize, setPageSize] = useState<number>(Number(paramsLoginHistory.size) || 10);
