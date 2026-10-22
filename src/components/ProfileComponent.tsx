@@ -7,7 +7,9 @@ import {
   FaXmark,
   FaArrowLeft,
   FaArrowRight,
-  FaShieldHalved
+  FaShieldHalved,
+  FaAngleRight,
+  FaUserAstronaut
 } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
@@ -191,9 +193,9 @@ const ProfileComponent: React.FC = () => {
             <div className="inline-block bg-yellow-300 border-2 border-black px-3 py-1 font-black text-xs uppercase tracking-widest shadow-[2px_2px_0px_0px_#000] mb-2">
               USER PROFILE
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-black leading-tight">
-              Profil Pengguna
-            </h1>
+            <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-black leading-tight flex items-center gap-2">
+              <FaUserAstronaut className="text-xl sm:text-2xl" /> User Detail
+            </h2>
           </div>
           <button
             type="button"
@@ -219,7 +221,9 @@ const ProfileComponent: React.FC = () => {
 
         {error && !isLoading && (
           <div className="bg-pink-200 border-3 border-black p-4 shadow-[4px_4px_0px_0px_#000] flex items-center gap-3">
-            <span className="text-xl">⚠️</span>
+            <span className="text-xl">
+              <FaAngleRight/>
+            </span>
             <div>
               <p className="font-black text-xs uppercase text-pink-900">Gagal Memuat / Mengupdate Profil</p>
               <p className="text-xs font-bold text-black">{error}</p>
