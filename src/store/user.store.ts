@@ -1,43 +1,37 @@
 import { create } from "zustand";
-import { 
-  type AddAddressUserPayload, 
-  type GetHistoryLoginUserPayload, 
+import {
+  type AddAddressUserPayload,
+  type GetHistoryLoginUserPayload,
   type GetHistoryLoginUserResponse,
-  type ParamsHistoryLoginUser, 
-  type UpdateUserPayload, 
-  type UserDetailProfile, 
-  userService 
+  type LoginHistoryPagination,
+  type ParamsHistoryLoginUser,
+  type UpdateUserPayload,
+  type UserDetailProfile,
+  userService
 } from "../services/user.service";
-
-export interface LoginHistoryPagination {
-  page: number;
-  size: number;
-  totalPages: number;
-  totalData: number;
-}
 
 interface UserState {
   user: UserDetailProfile | null;
   updateUser: UpdateUserPayload | null;
   addAddressUser: AddAddressUserPayload | null;
-  getHistoryLogin: GetHistoryLoginUserPayload[]; 
+  getHistoryLogin: GetHistoryLoginUserPayload[];
   paginationLoginHistory: LoginHistoryPagination;
   paramsLoginHistory: ParamsHistoryLoginUser;
   isLoading: boolean;
   isLoadingLoginHistory: boolean;
   error: string | null;
   errorLoginHistory: string | null;
-  
+
   setUser: (user: UserDetailProfile | null) => void;
   setHistoryLogin: (history: GetHistoryLoginUserPayload[]) => void;
   clearError: () => void;
   setParamsLoginHistory: (params: Partial<ParamsHistoryLoginUser>) => void;
-  
+
   profileDetail: () => Promise<void>;
   updateDetail: (payload: UpdateUserPayload) => Promise<string>;
   addUserAddress: (payload: AddAddressUserPayload) => Promise<string>;
-  
-  getLoginHistory: (customParams?: ParamsHistoryLoginUser) => Promise<GetHistoryLoginUserResponse>; 
+
+  getLoginHistory: (customParams?: ParamsHistoryLoginUser) => Promise<GetHistoryLoginUserResponse>;
 }
 
 export const useUserStore = create<UserState>((set, get) => ({
@@ -51,14 +45,14 @@ export const useUserStore = create<UserState>((set, get) => ({
   isLoadingLoginHistory: false,
   error: null,
   errorLoginHistory: null,
-  
+
   setUser: (user: UserDetailProfile | null) => set({ user }),
   setHistoryLogin: (history: GetHistoryLoginUserPayload[]) => set({ getHistoryLogin: history }),
   clearError: () => set({ error: null, errorLoginHistory: null }),
-  
-  setParamsLoginHistory: (params: Partial<ParamsHistoryLoginUser>) => 
+
+  setParamsLoginHistory: (params: Partial<ParamsHistoryLoginUser>) =>
     set((state) => ({ paramsLoginHistory: { ...state.paramsLoginHistory, ...params } })),
-  
+
   profileDetail: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -69,7 +63,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       throw error;
     }
   },
-  
+
   updateDetail: async (payload: UpdateUserPayload) => {
     set({ isLoading: true, error: null });
     try {
@@ -86,7 +80,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       throw error;
     }
   },
-  
+
   addUserAddress: async (payload: AddAddressUserPayload) => {
     set({ isLoading: true, error: null });
     try {
@@ -103,22 +97,22 @@ export const useUserStore = create<UserState>((set, get) => ({
       throw error;
     }
   },
-  
+
   getLoginHistory: async (customParams) => {
     set({ isLoadingLoginHistory: true, errorLoginHistory: null });
     try {
-      const activeParams = customParams 
-        ? { ...get().paramsLoginHistory, ...customParams } 
+      const activeParams = customParams
+        ? { ...get().paramsLoginHistory, ...customParams }
         : get().paramsLoginHistory;
-      
+
       const response = await userService.getHistoryLoginUser(activeParams);
       console.log("[user.store.ts] data: ", response);
-      
+
       const resData = response.data;
       const historyList = Array.isArray(resData?.data) ? resData.data : [];
-      
-      set({ 
-        getHistoryLogin: historyList, 
+
+      set({
+        getHistoryLogin: historyList,
         paginationLoginHistory: {
           page: Number(resData?.page) || 1,
           size: Number(resData?.size) || 10,
@@ -126,10 +120,10 @@ export const useUserStore = create<UserState>((set, get) => ({
           totalData: Number(resData?.totalData) || 0,
         },
         paramsLoginHistory: activeParams,
-        isLoadingLoginHistory: false, 
-        errorLoginHistory: null 
+        isLoadingLoginHistory: false,
+        errorLoginHistory: null
       });
-      
+
       return response;
     } catch (error: any) {
       set({

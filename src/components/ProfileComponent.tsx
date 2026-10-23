@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useUserStore } from "../store/user.store";
-import { 
-  FaCheck, 
-  FaMagnifyingGlass, 
-  FaRotate, 
+import {
+  FaCheck,
+  FaMagnifyingGlass,
+  FaRotate,
   FaXmark,
   FaArrowLeft,
   FaArrowRight,
@@ -221,7 +221,7 @@ const ProfileComponent: React.FC = () => {
         {error && !isLoading && (
           <div className="bg-pink-200 border-3 border-black p-4 shadow-[4px_4px_0px_0px_#000] flex items-center gap-3">
             <span className="text-xl">
-              <FaAngleRight/>
+              <FaAngleRight />
             </span>
             <div>
               <p className="font-black text-xs uppercase text-pink-900">Gagal Memuat / Mengupdate Profil</p>
@@ -499,11 +499,10 @@ const ProfileComponent: React.FC = () => {
                       </td>
                       <td className="py-3 px-4 border-r-2 border-black">
                         <span
-                          className={`inline-block border-2 border-black px-2.5 py-0.5 text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_#000] ${
-                            isSuccess
+                          className={`inline-block border-2 border-black px-2.5 py-0.5 text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_#000] ${isSuccess
                               ? "bg-emerald-300 text-black"
                               : "bg-pink-300 text-black"
-                          }`}
+                            }`}
                         >
                           {item.status || "UNKNOWN"}
                         </span>

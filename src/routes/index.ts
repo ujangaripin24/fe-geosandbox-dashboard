@@ -12,19 +12,23 @@ import ProfilePage from "../pages/ProfilePage/ProfilePage";
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: React.createElement(HomePage)
+        element: React.createElement(HomePage),
+        handle: { title: "Home" } // <--- Tambahkan handle.title
     },
     {
         path: '/login',
-        element: React.createElement(LoginPage)
+        element: React.createElement(LoginPage),
+        handle: { title: "Login" }
     },
     {
         path: '/register',
-        element: React.createElement(RegisterPage)
+        element: React.createElement(RegisterPage),
+        handle: { title: "Register" }
     },
     {
         path: '/template-ui',
-        element: React.createElement(ComponentUIPage)
+        element: React.createElement(ComponentUIPage),
+        handle: { title: "UI Components" }
     },
     {
         element: React.createElement(ProtectedRoute),
@@ -35,14 +39,16 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: React.createElement(DashboardPage)
+                        element: React.createElement(DashboardPage),
+                        handle: { title: "Dashboard" } // <--- Untuk rute index
                     },
                     {
                         path: 'profile',
-                        element: React.createElement(ProfilePage)
+                        element: React.createElement(ProfilePage),
+                        handle: { title: "User Profile" }
                     }
                 ]
             }
         ]
     }
-])
+]);

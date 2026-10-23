@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { useHomeStore } from '../../store/home.store';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -10,6 +11,22 @@ const MainHome: React.FC = () => {
   const [lng, setLng] = useState<number>(118.0148);
   const [lat, setLat] = useState<number>(-2.5489);
   const [zoom, setZoom] = useState<number>(5);
+  const {
+    error,
+    isLoading,
+    getAllPlaces,
+    placeData,
+    setParamsPlace,
+    paramsPlace,
+    setPaginationPlace,
+    paginationPlace,
+  } = useHomeStore();
+
+  useEffect(() => {
+    getAllPlaces({ page: 1, size: 10, search: "" })
+  }, []);
+
+  console.log("placeData: ", placeData)
 
   useEffect(() => {
     if (!mapContainerRef.current) return;

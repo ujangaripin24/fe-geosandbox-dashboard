@@ -69,6 +69,13 @@ export interface LoginHistoryPaginationData {
   totalData: number;
 }
 
+export interface LoginHistoryPagination {
+  page: number;
+  size: number;
+  totalPages: number;
+  totalData: number;
+}
+
 export interface GetHistoryLoginUserResponse {
   status: string;
   data: LoginHistoryPaginationData;
