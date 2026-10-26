@@ -57,7 +57,6 @@ export const homeService = {
     async getAllPlaces(payload?: ParamsGetAllPlaces): Promise<GeoJsonResponse> {
         try {
             const response = await apiClient.get<GeoJsonResponse>('/gis/point/get-all', { params: payload });
-            console.log("response", response);
             return response.data;
         } catch (error: any) {
             throw new Error(extractErrorMessage(error));
