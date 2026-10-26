@@ -15,18 +15,12 @@ const MainHome: React.FC = () => {
   const [zoom, setZoom] = useState<number>(5);
 
   const {
-    error,
-    isLoading,
     getAllPlaces,
     placeData,
-    setParamsPlace,
-    paramsPlace,
-    setPaginationPlace,
-    paginationPlace,
   } = useHomeStore();
 
   useEffect(() => {
-    getAllPlaces({ page: 1, size: 10, search: "" });
+    getAllPlaces({ page: 1, size: 200, search: "" });
   }, []);
 
   useEffect(() => {
@@ -67,64 +61,159 @@ const MainHome: React.FC = () => {
     const map = mapRef.current;
     if (!map || !isMapLoaded) return;
 
-    markersRef.current.forEach((marker) => marker.remove());
-    markersRef.current = [];
-
     const features = placeData?.data?.features || [];
     if (!features || features.length === 0) return;
 
-    const bounds = new mapboxgl.LngLatBounds();
+    const sourceId = 'places-source';
+    const clusterLayerId = 'clusters';
+    const countLayerId = 'cluster-count';
+    const unclusteredLayerId = 'unclustered-point';
 
-    features.forEach((feature) => {
-      if (!feature.geometry || feature.geometry.type !== 'Point') return;
-      const [lon, latitude] = feature.geometry.coordinates;
-      if (typeof lon !== 'number' || typeof latitude !== 'number') return;
+    const geoJsonData: GeoJSON.FeatureCollection<GeoJSON.Point> = {
+      type: 'FeatureCollection',
+      features: features.filter((f) =>
+        f.geometry && f.geometry.type === 'Point' &&
+        typeof f.geometry.coordinates[0] === 'number' &&
+        typeof f.geometry.coordinates[1] === 'number'
+      )
+    };
 
-      const popupHtml = `
+    if (map.getSource(sourceId)) {
+      (map.getSource(sourceId) as mapboxgl.GeoJSONSource).setData(geoJsonData);
+    } else {
+      map.addSource(sourceId, {
+        type: 'geojson',
+        data: geoJsonData,
+        cluster: true,
+        clusterMaxZoom: 15,
+        clusterRadius: 50
+      });
+
+      map.addLayer({
+        id: clusterLayerId,
+        type: 'circle',
+        source: sourceId,
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': [
+            'step',
+            ['get', 'point_count'],
+            '#FDA4AF', 10,
+            '#FB7185', 30,
+            '#E11D48',
+          ],
+          'circle-radius': [
+            'step',
+            ['get', 'point_count'],
+            15, 10,
+            20, 30,
+            25
+          ],
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#000000',
+        }
+      });
+
+      map.addLayer({
+        id: countLayerId,
+        type: 'symbol',
+        source: sourceId,
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': ['get', 'point_count_abbreviated'],
+          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+          'text-size': 12,
+        },
+        paint: {
+          'text-color': '#000000',
+        }
+      });
+
+      map.addLayer({
+        id: unclusteredLayerId,
+        type: 'circle',
+        source: sourceId,
+        filter: ['!', ['has', 'point_count']],
+        paint: {
+          'circle-color': '#E11D48',
+          'circle-radius': 8,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#000000',
+        },
+      });
+
+      map.on('click', clusterLayerId, (e) => {
+        const features = map.queryRenderedFeatures(e.point, { layers: [clusterLayerId] });
+        if (!features.length) return;
+
+        const clusterFeature = features[0];
+        const clusterId = clusterFeature.properties?.cluster_id;
+        if (clusterId === undefined || clusterId === null) return;
+
+        (map.getSource(sourceId) as mapboxgl.GeoJSONSource).getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err || zoom == null) return;
+          if (clusterFeature.geometry.type === 'Point') {
+            map.easeTo({
+              center: clusterFeature.geometry.coordinates as [number, number],
+              zoom: zoom,
+            });
+          }
+        });
+      });
+
+      map.on('click', unclusteredLayerId, (e) => {
+        if (!e.features || !e.features[0]) return;
+        const feature = e.features[0];
+        if (feature.geometry.type !== 'Point') return;
+
+        const coordinates = (feature.geometry.coordinates as [number, number]).slice();
+        const props = (feature.properties || {}) as Record<string, any>;
+
+        const popupHtml = `
         <div style="font-family: inherit; padding: 4px; color: #000; min-width: 180px;">
           <div style="background-color: #FACC15; border: 2px solid black; padding: 2px 6px; font-weight: 900; font-size: 10px; text-transform: uppercase; display: inline-block; box-shadow: 2px 2px 0px 0px #000; margin-bottom: 6px;">
-            ${feature.properties?.nama_kabupaten || 'Wilayah'}
+            ${props.nama_kabupaten || 'Wilayah'}
           </div>
           <h3 style="font-weight: 900; font-size: 14px; text-transform: uppercase; margin: 0 0 4px 0; color: #000;">
-            ${feature.properties?.name_place || 'Tanpa Nama'}
+            ${props.name_place || 'Tanpa Nama'}
           </h3>
-          ${feature.properties?.nama_provinsi
-          ? `<p style="font-size: 11px; font-weight: 700; color: #4B5563; margin: 0 0 4px 0;">📍 ${feature.properties.nama_provinsi}</p>`
-          : ''
-        }
-          ${feature.properties?.description
-          ? `<p style="font-size: 11px; color: #1F2937; margin: 4px 0; line-height: 1.4;">${feature.properties.description}</p>`
-          : ''
-        }
+          ${props.nama_provinsi ? `<p style="font-size: 11px; font-weight: 700; color: #4B5563; margin: 0 0 4px 0;">📍 ${props.nama_provinsi}</p>` : ''}
+          ${props.description ? `<p style="font-size: 11px; color: #1F2937; margin: 4px 0; line-height: 1.4;">${props.description}</p>` : ''}
           <div style="font-size: 10px; font-weight: 600; color: #6B7280; margin-top: 6px; font-family: monospace; border-top: 1px dashed #D1D5DB; padding-top: 4px;">
-            Koordinat: ${latitude.toFixed(4)}, ${lon.toFixed(4)}
+            Koordinat: ${coordinates[1].toFixed(4)}, ${coordinates[0].toFixed(4)}
           </div>
         </div>
       `;
 
-      const popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: true,
-        closeOnClick: false,
-        maxWidth: '280px',
-      }).setHTML(popupHtml);
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
 
-      const marker = new mapboxgl.Marker({
-        color: '#E11D48',
-      })
-        .setLngLat([lon, latitude])
-        .setPopup(popup)
-        .addTo(map);
+        new mapboxgl.Popup({
+          offset: 15,
+          closeButton: true,
+          closeOnClick: true,
+          maxWidth: '280px',
+        })
+          .setLngLat(coordinates as [number, number])
+          .setHTML(popupHtml)
+          .addTo(map);
+      });
 
-      markersRef.current.push(marker);
-      bounds.extend([lon, latitude]);
+      map.on('mouseenter', clusterLayerId, () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', clusterLayerId, () => { map.getCanvas().style.cursor = ''; });
+      map.on('mouseenter', unclusteredLayerId, () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', unclusteredLayerId, () => { map.getCanvas().style.cursor = ''; });
+    }
+    const bounds = new mapboxgl.LngLatBounds();
+    geoJsonData.features.forEach((feature) => {
+      bounds.extend(feature.geometry.coordinates as [number, number]);
     });
 
-    if (markersRef.current.length > 0) {
-      if (markersRef.current.length === 1) {
-        const [lon, latitude] = features[0].geometry.coordinates;
+    if (geoJsonData.features.length > 0) {
+      if (geoJsonData.features.length === 1) {
         map.flyTo({
-          center: [lon, latitude],
+          center: geoJsonData.features[0].geometry.coordinates as [number, number],
           zoom: 12,
           essential: true,
         });
@@ -136,6 +225,16 @@ const MainHome: React.FC = () => {
         });
       }
     }
+
+    return () => {
+      if (mapRef.current && mapRef.current.getStyle()) {
+        if (mapRef.current.getLayer(clusterLayerId)) mapRef.current.removeLayer(clusterLayerId);
+        if (mapRef.current.getLayer(countLayerId)) mapRef.current.removeLayer(countLayerId);
+        if (mapRef.current.getLayer(unclusteredLayerId)) mapRef.current.removeLayer(unclusteredLayerId);
+        if (mapRef.current.getSource(sourceId)) mapRef.current.removeSource(sourceId);
+      }
+    };
+
   }, [placeData, isMapLoaded]);
 
   return (
